@@ -78,15 +78,27 @@
 
 #### 3.3.2 Outlier-aware Neural Routing Function
 
-对于给定输入
+对于给定输入,分裂节点路由函数的目的是把子点传递到树的孩子节点上去，在这个问题上给定的输入是2D（RGB-D frame?）,以及该点的真值标签（由周围的信息决定），为了实现准确预测，路由函数需要从2D观察中了解3D场景内容。受到的点云分类以及从图片中生成点云，我们利用了点云处理框架运用到了神经路由函数中
 
-1. Input representation and sampling
+1. **Input representation** and sampling
 
-   
+   神经路由函数的输入是需要在3D世界下定位的图片点以及他周围的上下文信息。输入的点会有颜色和深度信息，但都两者高度依赖于viewpoint。为了获得在不同Viewpoint下的范化能力，通过**PPF-FoldNet可以增强他的深度通道**。首先利用相机标定参数将全帧深度投影到三维相机空间中，计算出oriented点云（什么点云？）还有17-point neighourhood中计算pointwise normal，然后将查询点和上下文信息编码成成对特征。
 
-2. Routing fuunction design
+   ![image-20230410101854766](/home/benben/.config/Typora/typora-user-images/image-20230410101854766.png)
+
+   ![image-20230410101935009](/home/benben/.config/Typora/typora-user-images/image-20230410101935009.png)
+
+   总结来说，对于每一个点和上下文输入点，它包含颜色信息*c*以及旋转不变信息*r*，来表示7维信息。**由于所有上下文点的旋转不变特征是以查询点为原点的局部参考系中计算的，因此省略几何特征，仅将颜色作为附着点的输入。**
+
+2. **Routing fuunction design**
+
+   路由函数分为两部分：**特征提取模块以及分类模块**。特征提取模块利用（点态）MLP从查询点和上下文点中学习特征（具体可以看流行的点云处理网络PointNet），分类模块利用从查询点和上下文点的深度信息去学在树中应该往哪个子节点中去走。
 
 3. Outlier rejection
+
+   在测试帧中给定一个动态点，那么决策树会把他送到属于静止节点，这会建立不正确的3D-3D匹配。
+
+   为了实现这个目标,我们进一步
 
 #### 3.3.3 HyperNetwork for the Routing Functions
 

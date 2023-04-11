@@ -1,4 +1,4 @@
-# # 6D Camera Relocalization in Ambiguous Scenes via Continuous Multimodal inference
+#  6D Camera Relocalization in Ambiguous Scenes via Continuous Multimodal inference
 
 
 
